@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
@@ -14,18 +16,15 @@ class SocialButtons extends StatelessWidget {
     return Column(
       children: [
         SignInButton(Buttons.Google, onPressed: () async {
-          print("SignInButton");
           final response = await authController.signInWithGoogle();
-          if (response != null) {
-            UserModel currentUser = UserModel(
-                email: response.user!.email.toString(),
-                name: response.user!.displayName.toString(),
-                photoURL: response.user!.photoURL.toString(),
-                signInMethod: response.credential!.signInMethod.toString());
-            authController.saveUser(currentUser, context);
-            Navigator.pushReplacementNamed(context, "/home",
-                arguments: currentUser);
-          }
+          UserModel currentUser = UserModel(
+              email: response.user!.email.toString(),
+              name: response.user!.displayName.toString(),
+              photoURL: response.user!.photoURL.toString(),
+              signInMethod: response.credential!.signInMethod.toString());
+          authController.saveUser(currentUser, context);
+          Navigator.pushReplacementNamed(context, "/home",
+              arguments: currentUser);
         }),
       ],
     );

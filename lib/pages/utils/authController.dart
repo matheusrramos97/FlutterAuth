@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter_auth/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -61,11 +63,8 @@ class AuthController {
   }
 
   Future<UserCredential> signInWithGoogle() async {
-    print("signInWithGoogle() init");
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    print("signInWithGoogle()");
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth =
@@ -86,28 +85,19 @@ class AuthController {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-      if (userCredential != null) {
-        final name = userCredential.user!.displayName != null
-            ? userCredential.user!.displayName
-            : userCredential.user!.email.toString();
-        final photoURL = userCredential.user!.photoURL != null
-            ? userCredential.user!.photoURL
-            : "https://img.freepik.com/free-vector/flat-design-no-photo-sign_23-2149259323.jpg?w=120";
+      final name = userCredential.user!.displayName ??
+          userCredential.user!.email.toString();
+      final photoURL = userCredential.user!.photoURL ??
+          "https://img.freepik.com/free-vector/flat-design-no-photo-sign_23-2149259323.jpg?w=120";
 
-        if (name == null && photoURL == null) {
-          debugPrint("Name: " + name.toString());
-          debugPrint("photoURL: " + photoURL.toString());
-        }
-
-        UserModel currentUser = UserModel(
-            email: userCredential.user!.email.toString(),
-            name: name.toString(),
-            photoURL: photoURL.toString(),
-            signInMethod: "Email And Password");
-        saveUser(currentUser, context);
-        Navigator.pushReplacementNamed(context, "/splash",
-            arguments: currentUser);
-      }
+      UserModel currentUser = UserModel(
+          email: userCredential.user!.email.toString(),
+          name: name.toString(),
+          photoURL: photoURL.toString(),
+          signInMethod: "Email And Password");
+      saveUser(currentUser, context);
+      Navigator.pushReplacementNamed(context, "/splash",
+          arguments: currentUser);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -140,25 +130,21 @@ class AuthController {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      if (userCredential != null) {
-        final name = userCredential.user!.displayName != null
-            ? userCredential.user!.displayName
-            : userCredential.user!.email.toString();
+      final name = userCredential.user!.displayName ??
+          userCredential.user!.email.toString();
 
-        final photoURL = userCredential.user!.photoURL != null
-            ? userCredential.user!.photoURL
-            : "https://img.freepik.com/free-vector/flat-design-no-photo-sign_23-2149259323.jpg?w=120";
+      final photoURL = userCredential.user!.photoURL ??
+          "https://img.freepik.com/free-vector/flat-design-no-photo-sign_23-2149259323.jpg?w=120";
 
-        debugPrint(userCredential.credential.toString());
-        UserModel currentUser = UserModel(
-            email: userCredential.user!.email.toString(),
-            name: name.toString(),
-            photoURL: photoURL.toString(),
-            signInMethod: "Email And Password");
-        saveUser(currentUser, context);
-        Navigator.pushReplacementNamed(context, "/splash",
-            arguments: currentUser);
-      }
+      debugPrint(userCredential.credential.toString());
+      UserModel currentUser = UserModel(
+          email: userCredential.user!.email.toString(),
+          name: name.toString(),
+          photoURL: photoURL.toString(),
+          signInMethod: "Email And Password");
+      saveUser(currentUser, context);
+      Navigator.pushReplacementNamed(context, "/splash",
+          arguments: currentUser);
       Navigator.pushReplacementNamed(
         context,
         "/splash",
